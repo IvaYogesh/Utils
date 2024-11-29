@@ -1,0 +1,35 @@
+============================== WAY -1 ==================================================
+
+' Define the path to the Edge browser executable
+Dim edgePath
+edgePath = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+
+' Define the command to open Edge in InPrivate mode
+Dim command
+command = edgePath & " --inprivate"
+
+' Launch Microsoft Edge in Incognito (InPrivate) mode
+SystemUtil.Run command
+
+
+
+
+
+
+=======================================WAY-2=================================================
+
+' Create a WScript.Shell object
+Dim objShell
+Set objShell = CreateObject("WScript.Shell")
+
+' Define the command to launch Edge in InPrivate mode
+Dim command
+command = """C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"" --inprivate"
+
+' Run the command to open Edge in InPrivate mode
+objShell.Run command
+
+' Clean up the object
+Set objShell = Nothing
+
+
