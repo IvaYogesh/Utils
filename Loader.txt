@@ -1,0 +1,32 @@
+' Function to wait for loader spinner to disappear
+Public Sub waitForLoaderSpinnerToDisappear()
+    Dim counter
+    counter = 1
+    Dim spinnerLoaderLocator
+    Set spinnerLoaderLocator = Browser("your_browser").Page("your_page").WebElement("xpath:=//*[local-name()='svg'][@aria-label='audio-loading']")
+    
+    ' Initial wait for 3 seconds
+    Wait 3
+    
+    ' Loop to check if the spinner is visible and wait until it disappears
+    Do While spinnerLoaderLocator.Exist
+        counter = counter + 1
+        Reporter.ReportEvent micInfo, "Counter", "Counter--> " & counter
+        
+        If Not spinnerLoaderLocator.Exist Then
+            Reporter.ReportEvent micPass, "Verify Processing... is disappeared", "Spinner is no longer visible"
+            Exit Do
+        Else
+            Reporter.ReportEvent micInfo, "Verify Processing... is appeared", "Waiting for 3 seconds"
+            Wait 3
+        End If
+        
+        ' Break loop after 3 attempts
+        If counter > 3 Then
+            Exit Do
+        End If
+    Loop
+
+    ' Log completion message
+    Reporter.ReportEvent micPass, "Verify Spinner Processing... is disappeared", "Spinner is disappeared"
+End Sub
