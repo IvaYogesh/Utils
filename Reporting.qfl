@@ -1,0 +1,153 @@
+﻿Public Function fSummaryReport(newFlag, aPDFName, Sno, ssstatus, ssstartTime, sSendTime, ssSummaryReport, sDisplayName)
+	on error resume next
+	Set fso = CreateObject("Scripting.FileSystemObject")
+	sssReportName = Environment.Value("sDetailReport")
+	ssReportName = Environment.Value("FinalTCFolder")&"\"
+	If newFlag = False then
+		ssFailTC = ssFailTC+1
+	Else
+		sspTC = sspTC+1
+	End If
+	
+	If fso.FileExists(ssSummaryReport&".html") Then
+		Set oPagObj = fso.OpenTextFile(ssSummaryReport&".html",8)
+		oPagObj.WriteLine "</TR>"
+		oPagObj.WriteLine "<TH width=0% colspan=""1"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small>"&Cstr(Sno)&"</small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=40% colspan=""2"" align=""left"" valign=""center""><FONT COLOR="&ssColor&" face=""Arial""><small><B><a href="&ssReportName&sssReportName&".html>"&sDisplayName&"</a></B></small></FONT></TH>"
+		If ssstatus = "Pass" Then
+			ssColor = "Green"
+		Else
+			ssColor = "Red"
+		End If
+		oPagObj.WriteLine "<TH width=20% colspan=""3"" align=""left"" valign=""center""><FONT COLOR="&ssColor&" face=""Arial""><small><B>"&ssstatus&"</B></small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=20% colspan=""3"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small><B>"&ssstartTime&"</B></small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=20% colspan=""3"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small><B>"&sSendTime&"</B></small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=10% colspan=""3"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small><B>"&Cstr(DateDiff("s",ssstartTime,sSendTime))&"</B></small></FONT></TH>"
+	Else
+		Set oPagObj = fso.CreateTextFile(ssSummaryReport&".html", 2)
+		oPagObj.WriteLine "<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.0 Transitional//EN"">"
+		oPagObj.WriteLine "<HTML><BODY><CENTER>"
+		oPagObj.WriteLine "<H1><FONT COLOR=#990000 face=""Arial"">Summary Reppport</FONT></H1>"
+		oPagObj.WriteLine "</TABLE>"
+		oPagObj.WriteLine "<BR>"
+		oPagObj.WriteLine "<div style=""text-align: right;"">"
+		oPagObj.WriteLine "<input id='myinput' type='text' name='Search' placeholder='Enter Pass or Failed...'>"
+		oPagObj.WriteLine "<button type='submit' onClick='searchTable()'>Search</button>" 'onClick='searchTable()'
+		oPagObj.WriteLine "</div>"
+		oPagObj.WriteLine "<TABLE id='myTable' ALIGN=""center"" BORDER=""1"" WIDTH = 100% CELLPADDING=""1"" >"
+		oPagObj.WriteLine "</TR>"
+		oPagObj.WriteLine "<TR BGCOLOR=""#aeaeff"">"
+		oPagObj.WriteLine "<TH width=0% colspan=""1"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small>S.No</small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=0% colspan=""2"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small><B>"& sReportType & "</B></small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=0% colspan=""3"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small><B>Status</B></small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=0% colspan=""3"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small><B>Execution Start Time</B></small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=0% colspan=""3"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small><B>Execution End Time</B></small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=0% colspan=""3"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small><B>Execution Time(secs)</B></small></FONT></TH>"
+		oPagObj.WriteLine "</TR>"
+		oPagObj.WriteLine "<TH width=0% colspan=""1"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small>"&Cstr(Sno)&"</small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=40% colspan=""2"" align=""left"" valign=""center""><FONT COLOR="&ssColor&" face=""Arial""><small><B><a href="&ssReportName&sssReportName&".html>"&sDisplayName&"</a></B></small></FONT></TH>"
+		If ssstatus = "Pass" Then
+			ssColor = "Green"
+		Else
+			ssColor = "Red"
+		End If
+		oPagObj.WriteLine "<TH width=20% colspan=""3"" align=""left"" valign=""center""><FONT COLOR="&ssColor&" face=""Arial""><small><B>"&ssstatus&"</B></small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=20% colspan=""3"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small><B>"&ssstartTime&"</B></small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=20% colspan=""3"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small><B>"&sSendTime&"</B></small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=10% colspan=""3"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small><B>"&Cstr(DateDiff("s",ssstartTime,sSendTime))&"</B></small></FONT></TH>"
+		End If
+		oPagObj.WriteLine "<script type = 'text/javascript' src='Path'></script>"
+		oPagObj.WriteLine "</script>"
+End Function
+
+Function fReportCreation(status, ER, AR)
+	on error resume next
+	PDFName = Environment.Value("sDetailReport")
+	Environment.Value("SNo") = Environment.Value("SNo")+1 'Need to add environment variable before start of reporting
+	'Environment.Value("Screenshots") = "C:\Vijay\Screenshots\"
+	strHTMLPath = Environment.Value("FinalTCFolder")&"\"
+	Set ofso = CreateObject("Scripting.FileSystemObject")
+	Set networkInfo = CreateObject("Wscript.Network")
+	wait 1
+	sScreenshotName = Environment.Value("Screenshots")&"Screenshot_"&Day(Now)&Month(Now)&Year(Now)&Hour(Now)&Minute(Now)&Second(Now)&".png"
+	IF ofso.FileExists(strHTMLPath & PDFName &".html") Then
+		ssjLoop = Environment.Value("SNo")
+		Set oPagObj = ofso.OpenTextFile(strHTMLPath & PDFName &".html",8)
+		oPagObj.WriteLine "</TR>"
+		oPagObj.WriteLine "<TH width=0% colspan=""1"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small>"&Cstr(ssjLoop)&"</small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=40% colspan=""3"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small><B>"& ER &"</a></B></small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=40% colspan=""4"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small><B>"& AR &"</a></B></small></FONT></TH>"
+		If ssstatus = "Pass" Then
+			ssColor = "Green"
+		Else
+			ssColor = "Red"
+		End If
+		
+		Desktop.CaptureBitMap(sScreenshotName)
+		oPagObj.WriteLine "<TH width=20% colspan=""5"" align=""left"" valign=""center""><FONT COLOR=" & ssColor &" face=""Arial""><small><B><a href=" & sScreenshotName & ">"& status &"</a></B></small></FONT></TH>"
+	Else
+		ssjLoop = Environment.Value("SNo")
+		Set oPagObj = ofso.createTextFile(strHTMLPath & PDFName &".html",2)
+		oPagObj.WriteLine "<style>"
+		oPagObj.WriteLine "body {"
+		oPagObj.WriteLine "background-color:#e6fff7;"
+		oPagObj.WriteLine "}"
+		oPagObj.WriteLine "</style>"
+		oPagObj.WriteLine "<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.0 Transitional//EN"">"
+		oPagObj.WriteLine "<HTML><BODY><CENTER>"
+		oPagObj.WriteLine "<H2><FONT COLOR=#FF0000 face=""Arial"" align='center'>Detail Report</FONT></H2>"
+		oPagObj.WriteLine "<table style=""width:25%"" BORDER = ""1"">"
+		oPagObj.WriteLine "<TR><TD><b>TestCaseName</b></TD><TD><FONT COLOR=Blue face=""Arial"">"&Environment.Value("testcase") & "</FONT></TD></TR>"
+		oPagObj.WriteLine "<TR><TD><b>Executed By</b></TD><TD><FONT COLOR=Blue face=""Arial"">"& networkInfo.UserName & "</FONT></TD></TR>"
+		oPagObj.WriteLine "<TR><TD><b>Host Name</b></TD><TD><FONT COLOR=Blue face=""Arial"">"& networkInfo.ComputerName & "</FONT></TD></TR>"
+		oPagObj.WriteLine "</TABLE>"
+		oPagObj.WriteLine "<BR>"
+		oPagObj.WriteLine "<TABLE ALIGN=""center"" BORDER=""1"" WIDTH = 100% CELLPADDING=""1"" >"
+		oPagObj.WriteLine "<TR BGCOLOR=""#aeaeff"">"
+		oPagObj.WriteLine "</TR>"
+		oPagObj.WriteLine "<TR BGCOLOR=""#aeaeff"">"
+		oPagObj.WriteLine "<TH width=0% colspan=""1"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small>S.No</small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=40% colspan=""3"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small><B>Expected</B></small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=40% colspan=""4"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small>Actual</small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=20% colspan=""7"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small><B>Status</B></small></FONT></TH>"
+		oPagObj.WriteLine "</TR>"
+		oPagObj.WriteLine "<TH width=0% colspan=""1"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small>" & Cstr(ssjLoop) &"</small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=40% colspan=""3"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small><B>" & ER & "</B></small></FONT></TH>"
+		oPagObj.WriteLine "<TH width=40% colspan=""4"" align=""left"" valign=""center""><FONT COLOR=black face=""Arial""><small>" & AR & "</small></FONT></TH>"
+		If ssstatus = "Pass" Then
+			ssColor = "Green"
+		Else
+			ssColor = "Red"
+		End If
+		Desktop.CaptureBitMap(sScreenshotName)
+		oPagObj.WriteLine "<TH width=20% colspan=""7"" align=""left"" valign=""center""><FONT COLOR="& ssColor&" face=""Arial""><small><B><a href="& sScreenshotName & ">" & status & "</a></B></small></FONT></TH>"
+	End IF
+	oPagObj.Close
+	Set oPagObj = Nothing
+	Set ofso = Nothing
+End Function
+
+Function fReadReportForFailure(sReportPath)
+	Set ofso = CreateObject("Scripting.FileSystemObject")
+	If ofso.FileExists(sReportPath) Then
+		Set oPag = ofso.OpenTextFile(sReportPath)
+		strFileContent = oPag.ReadAll
+		If Instr(Lcase(strFileContent), "fail") > 0 Then
+			bFlag = False
+		Else
+			bFlag = True
+		End If
+	End If
+	fReadReportForFailure = bFlag
+	
+End Function
+		
+
+
+Function loadVariables()
+	rootFolder = "C:\OracleHospitality\"
+	Environment.Value("Screenshots") = rootFolder&"ScreenShots\"
+	Environment.Value("SNo") = 0
+	'Environment.Value("sDetailReport") = rootFolder&"Report\"&Environment.Value("TCName")
+	Environment.Value("FinalTCFolder") = rootFolder&"Report\Detailed"
+End Function
